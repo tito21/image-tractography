@@ -13,12 +13,14 @@ function millis_to_time(millis) {
     }
 }
 
-class ProgressBar {
-    constructor(container, total = 1, callback = () => {}) {
+class ProgressBar extends EventTarget {
+
+    constructor(container, total = 1) {
+        super();
         this.container = container;
         this.progress = 0;
         this.total = total;
-        this.callback = callback;
+        // this.callback = callback;
         this.bar = document.createElement('progress');
         this.bar.setAttribute('class', 'progress');
         this.bar.setAttribute('value', 0);
@@ -28,6 +30,8 @@ class ProgressBar {
         this.container.appendChild(this.text);
         this.start_time = Date.now();
         this.finished = false;
+        this.stop_event = new Event('stop');
+        console.log(this.stop_event);
     }
 
     setProgress(progress) {
@@ -38,8 +42,9 @@ class ProgressBar {
         this.update();
         if (this.progress >= this.total) {
             this.bar.classList.add('done');
-            this.callback();
+            // this.callback();
             this.finished = true;
+            this.dispatchEvent(this.stop_event);
         }
     }
 
